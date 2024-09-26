@@ -8,10 +8,13 @@ public class Village {
 	private Chef chef;
 	private Gaulois[] villageois;
 	private int nbVillageois = 0;
+	private Marche[] marché;
+	
 
-	public Village(String nom, int nbVillageoisMaximum) {
+	public Village(String nom, int nbVillageoisMaximum,int nbEtalsMarche) {
 		this.nom = nom;
 		villageois = new Gaulois[nbVillageoisMaximum];
+		marché=new Marche[nbEtalsMarche];
 	}
 
 	public String getNom() {
@@ -55,5 +58,75 @@ public class Village {
 			}
 		}
 		return chaine.toString();
+	}
+	
+	
+	private static class Marche{
+		private Etal[] etals;
+		private int nbEtals;
+		
+		private Marche(int nbEtals) {
+			this.nbEtals=nbEtals;
+			etals=new Etal[nbEtals];
+		}
+		
+		private void utiliserEtal(int indiceEtal, Gaulois vendeur,String produit, int nbProduit) {
+			etals[indiceEtal].occuperEtal(vendeur, produit, nbProduit);
+		}
+		
+		private int trouverEtalLibre() {
+			for(int i=0;i<nbEtals;i++) {
+				if  (!etals[i].isEtalOccupe()) {
+					return i;
+				}	
+		}
+		return -1;
+		}
+		
+		private Etal[] trouverEtal(String produit) {
+			Etal[] etalsProduit= new Etal[nbEtals];
+			int p=0;
+			for (int i=0;i<nbEtals;i++) {
+				if (etals[i].contientProduit(produit)) {
+					etalsProduit[p]=etals[i];
+					p++;
+				}
+			}
+			return etalsProduit;
+		}
+		
+		private Etal trouverVendeur(Gaulois gaulois) {
+			for (int i=0;i<nbEtals;i++) {
+				if (gaulois==etals[i].getVendeur()) {
+				return etals[i];
+			}
+			}
+			return null;
+		}
+		
+		
+		private String afficheMarche() {
+			int nbEtalVide=nbEtals;
+			for (int i=0;i<nbEtals;i++) {
+				if (etals[i].isEtalOccupe()) {
+					etals[i].afficherEtal();
+					nbEtalVide--;
+				}
+			}
+			return  "Il reste " + nbEtalVide + " étals non utilisés dans le marché.\n";
+
+		}
+		
+		public String installerVendeur(Gaulois vendeur,String produit,int nbProduit) {
+			StringBuilder chaine=new StringBuilder();
+			chaine.append(vendeur.getNom()+" cherche un endroit pour vendre "+produit+" "+nbProduit+".\n");
+			int i =marché.trouverEtalLibre();
+			marché.utiliserEtal(i,vendeur,produit,nbProduit);
+			chaine.append("Le vendeur "+vendeur.getNom()+" vend des "+produit+" à l'étal n°"+i+".\n");
+			return chaine.toString();
+		}
+		
+		
+		
 	}
 }
