@@ -70,6 +70,7 @@ public class Village {
 		private int nbEtals;
 		
 		private Marche(int nbEtals) {
+			super();
 			this.nbEtals=nbEtals;
 			this.etals=new Etal[nbEtals];
 		}
